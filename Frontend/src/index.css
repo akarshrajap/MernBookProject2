@@ -1,0 +1,62 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #ffffff;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Container for the whole App */
+.app-wrapper {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Typography from your UI image */
+h1 {
+  color: #2b7fff; /* The bright blue from your screenshot */
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+/* Table Styling to match the clean look */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 40px;
+  background-color: #fff;
+}
+
+th {
+  background-color: #f8f9fa;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #eee;
+  font-weight: bold;
+}
+
+td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+/* Hover effect for table rows */
+tr:hover {
+  background-color: #fcfcfc;
+}
