@@ -1,8 +1,11 @@
 import axios from 'axios';
 
-// Use environment variable, fallback to deployed backend, then localhost
-// Priority: VITE_API_URL env var > deployed backend > localhost
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://mernbookproject2-1.onrender.com' || 'http://localhost:4000';
+// Use environment variable only. Set VITE_API_URL to your backend host in deployment settings.
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+if (!API_BASE_URL) {
+  console.warn('VITE_API_URL not defined; frontend requests may fail.');
+}
 
 // Create an instance so you don't pollute the global axios object
 const API = axios.create({
