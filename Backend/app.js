@@ -28,7 +28,13 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use("/api/books",  bookroute); 
+app.use("/api/books", protect, bookroute);
+
+// basic error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(err.status || 500).json({ message: err.message || 'Server error' });
+});
 
 // 3. Seed Route with Better Error Logging
 app.get('/api/create-admin', async (req, res) => {

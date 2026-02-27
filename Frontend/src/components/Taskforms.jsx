@@ -8,7 +8,7 @@ const TaskForm = ({ form, setForm, editingId, setEditingId }) => {
   const handleSubmit = () => {
     if (editingId) {
       // Connecting to Express PUT route
-      dispatch(updateTask({ id: editingId, data: { title: form.name, author: form.description } }));
+      dispatch(updateTask({ id: editingId, updatedData: { title: form.name, author: form.description } }));
       setEditingId(null);
     } else {
       // Connecting to Express POST route

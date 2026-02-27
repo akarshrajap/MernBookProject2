@@ -21,12 +21,10 @@ exports.protect = (req, res, next) => {
             next(); 
         } catch (error) {
             console.error("Middleware Error: Token failed verification", error.message);
-            res.status(401).json({ message: 'Not authorized, token failed' });
+            return res.status(401).json({ message: 'Not authorized, token failed' });
         }
-    }
-
-    if (!token) {
+    } else {
         console.warn("Middleware Warning: No token found in headers");
-        res.status(401).json({ message: 'Not authorized, no token' });
+        return res.status(401).json({ message: 'Not authorized, no token' });
     }
 };
