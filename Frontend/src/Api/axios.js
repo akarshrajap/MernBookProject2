@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-// Temporarily hardcoded for testing CORS (replace with your Render backend URL)
-const API_BASE_URL = 'https://mern-crud-api.onrender.com';
+// Use environment variable, fallback to deployed backend, then localhost
+// Priority: VITE_API_URL env var > deployed backend > localhost
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://mernbookproject2-1.onrender.com' || 'http://localhost:4000';
 
 // Create an instance so you don't pollute the global axios object
 const API = axios.create({

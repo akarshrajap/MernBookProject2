@@ -17,48 +17,21 @@ const mongoURI = process.env.MONGODB_URI;
 
 // 2. Load User Model - DOUBLE CHECK THIS PATH
 // If your file is dbmodels/User.js, this is correct.
-const User = require('./dbmodels/User'); 
-
 // Middleware
-// Robust CORS: allow multiple comma-separated FRONTEND_URL values, support '*',
-// and allow localhost during development automatically.
-const rawFrontends = process.env.FRONTEND_URL || 'http://localhost:5173';
-const allowedOrigins = rawFrontends.split(',').map(o => o.trim()).filter(Boolean);
+// CORS configuration: allow origins from env or fallback to common values
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(",").map((s) => s.trim())
+  : ["https://mernbookproject2-2.onrender.com", "http://localhost:5173"];
 
 app.use(cors({
-    origin(origin, callback) {
-        // allow non-browser requests (tools, server-to-server)
-        if (!origin) return callback(null, true);
-
-        // allow wildcard
-        if (allowedOrigins.includes('*') || allowedOrigins.includes('')) return callback(null, true);
-
-        // exact match
-        if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
-
-        // allow localhost in non-production (convenience)
-        if (process.env.NODE_ENV !== 'production') {
-            try {
-                const url = new URL(origin);
-                if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return callback(null, true);
-            } catch (e) {}
-        }
-
-        // reject other origins
-        return callback(new Error('CORS policy: Origin not allowed'));
-    },
-    credentials: true,
-    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type','Authorization','Origin','Accept','X-Requested-With']
+  origin(origin, callback) {
+    if (!origin) return callback(null, true); // allow tools, server-to-server
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
 }));
-
-// Friendly CORS error handler to return 403 instead of 500 when origin blocked
-app.use((err, req, res, next) => {
-    if (err && /CORS policy/.test(err.message)) {
-        return res.status(403).json({ message: err.message });
-    }
-    return next(err);
-});
 
 app.use(express.json());
 
