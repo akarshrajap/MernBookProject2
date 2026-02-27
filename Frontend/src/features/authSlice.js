@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../Api/axios";
 
-const API_URL = "http://localhost:4000/api/auth";
+const API_URL = "/auth";
 
 // 1. ASYNC THUNK: Login User
 // We use 'export' so Login.jsx can import { loginUser }
@@ -9,7 +9,7 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, userData);
+      const response = await API.post(`${API_URL}/login`, userData);
       
       // Save token to localStorage so the user stays logged in after refresh
       if (response.data.token) {
@@ -29,7 +29,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/register`, userData);
+      const response = await API.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Registration failed");

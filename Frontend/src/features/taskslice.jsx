@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../Api/axios";
 
-const API_URL = "http://localhost:4000/api/books";
+const API_URL = "/books";
 
 // Helper function to get the Token and setup Headers
 const getAuthConfig = (getState) => {
@@ -20,7 +20,7 @@ export const fetchTasks = createAsyncThunk(
   "tasks/fetchTasks",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const response = await axios.get(API_URL, getAuthConfig(getState));
+      const response = await API.get(API_URL, getAuthConfig(getState));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch tasks");
@@ -33,7 +33,7 @@ export const addTask = createAsyncThunk(
   "tasks/addTask",
   async (taskData, { getState, rejectWithValue }) => {
     try {
-      const response = await axios.post(API_URL, taskData, getAuthConfig(getState));
+      const response = await API.post(API_URL, taskData, getAuthConfig(getState));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to add task");
@@ -46,7 +46,7 @@ export const updateTask = createAsyncThunk(
   "tasks/updateTask",
   async ({ id, updatedData }, { getState, rejectWithValue }) => {
     try {
-      const response = await axios.put(`${API_URL}/${id}`, updatedData, getAuthConfig(getState));
+      const response = await API.put(`${API_URL}/${id}`, updatedData, getAuthConfig(getState));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Update failed");
@@ -59,7 +59,7 @@ export const deleteTask = createAsyncThunk(
   "tasks/deleteTask",
   async (id, { getState, rejectWithValue }) => {
     try {
-      await axios.delete(`${API_URL}/${id}`, getAuthConfig(getState));
+      await API.delete(`${API_URL}/${id}`, getAuthConfig(getState));
       return id; // Return ID to remove it from the local state
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Delete failed");
