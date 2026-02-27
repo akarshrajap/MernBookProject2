@@ -20,8 +20,17 @@ const mongoURI = process.env.MONGODB_URI;
 const User = require('./dbmodels/User'); 
 
 // Middleware
+// Support multiple frontend origins via comma-separated FRONTEND_URL env var
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',').map(o => o.trim()).filter(Boolean);
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: function(origin, callback) {
+        // allow non-browser requests like cURL, Postman (no origin)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            return callback(null, true);
+        }
+        return callback(new Error('CORS policy: Origin not allowed'));
+    },
     credentials: true
 }));
 app.use(express.json());
