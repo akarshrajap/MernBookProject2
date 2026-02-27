@@ -1,11 +1,11 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 // Create an instance so you don't pollute the global axios object
 const API = axios.create({
-    baseURL: 'http://localhost:4000/api', // or your Render URL
+    baseURL: `${API_BASE_URL}/api`,
 });
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 
 // Add the interceptor to THIS instance
