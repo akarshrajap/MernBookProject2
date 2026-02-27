@@ -20,19 +20,46 @@ const mongoURI = process.env.MONGODB_URI;
 const User = require('./dbmodels/User'); 
 
 // Middleware
-// Support multiple frontend origins via comma-separated FRONTEND_URL env var
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',').map(o => o.trim()).filter(Boolean);
+// Robust CORS: allow multiple comma-separated FRONTEND_URL values, support '*',
+// and allow localhost during development automatically.
+const rawFrontends = process.env.FRONTEND_URL || 'http://localhost:5173';
+const allowedOrigins = rawFrontends.split(',').map(o => o.trim()).filter(Boolean);
+
 app.use(cors({
-    origin: function(origin, callback) {
-        // allow non-browser requests like cURL, Postman (no origin)
+    origin(origin, callback) {
+        // allow non-browser requests (tools, server-to-server)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            return callback(null, true);
+
+        // allow wildcard
+        if (allowedOrigins.includes('*') || allowedOrigins.includes('')) return callback(null, true);
+
+        // exact match
+        if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
+
+        // allow localhost in non-production (convenience)
+        if (process.env.NODE_ENV !== 'production') {
+            try {
+                const url = new URL(origin);
+                if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return callback(null, true);
+            } catch (e) {}
         }
+
+        // reject other origins
         return callback(new Error('CORS policy: Origin not allowed'));
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type','Authorization','Origin','Accept','X-Requested-With']
 }));
+
+// Friendly CORS error handler to return 403 instead of 500 when origin blocked
+app.use((err, req, res, next) => {
+    if (err && /CORS policy/.test(err.message)) {
+        return res.status(403).json({ message: err.message });
+    }
+    return next(err);
+});
+
 app.use(express.json());
 
 // Routes
